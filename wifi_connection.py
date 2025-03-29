@@ -5,7 +5,7 @@ import json
 SSID = ""
 PASSWORD = ""
 
-def connect_wifi():
+async def connect_wifi():
     wlan = network.WLAN(network.STA_IF)
     wlan.active(True)
     wlan.connect(SSID, PASSWORD)

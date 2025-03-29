@@ -6,6 +6,9 @@ import time
 from micropython import const
 from struct import unpack
 
+from data_queue import ecg_queue, imu_queue, hr_queue
+
+rtc = machine.RTC()
 
 # Movesense series
 _MOVESENSE_SERIES = "174630000192"
@@ -25,7 +28,6 @@ _CMD_SUBSCRIBE = const(1)
 _CMD_UNSUBSCRIBE = const(2)
 
 
-
 # Onboard LED for status
 led = machine.Pin("LED", machine.Pin.OUT)
 
@@ -42,6 +44,11 @@ class MovesenseDevice:
     def log(self, msg):
         print(f"[MS{self.ms_series}]: {msg}")
         
+    def json_data_format(self):
+        self.json_data = {"Movesense series": self.ms_series, 
+                          "Movesense name": self.name}
+        return self.json_data
+
     async def connect_ble(self, device):
         try:
             print(f"Connecting device {device} to BLE...")
@@ -115,6 +122,8 @@ class MovesenseDevice:
             "IMU6": 2,
             "IMU9": 3
             }
+        json_data = {}
+        json_data.update(self.json_data_format())
         sample_count = len(data[6:]) // MovesenseDevice.BYTES_PER_ELEMENT
         data = list(unpack(f'<BBI{sample_count}f', data))
         timestamp = data[2]
@@ -136,6 +145,8 @@ class MovesenseDevice:
                 sample = [timestamp, acc[0], acc[1], acc[2], gyro[0], gyro[1], gyro[2], magn[0], magn[1], magn[2]]
             imu_samples.append(sample)
         self.log(f"{self.imu_sensor} - Timestamp: {timestamp}, samples {imu_samples}")
+        #NEED TO PROCESS DATA TO PUT IN JSON 
+        # imu_queue.enqueue(json_data)
         
     def _process_hr_data(self, data):
         # < = little endian
@@ -143,25 +154,39 @@ class MovesenseDevice:
         # B = unsigned char (1 byte)
         # f = float (4 bytes)
         # H = uint16 (2 bytes)
+        json_data = {}
         data_unpack = list(unpack(f'<BBfH', data))
-#         print(f"unpack HR data {data}")
         avg_hr = data_unpack[2]
         rr_interval = data_unpack[3]
         self.log(f"HR data: ts {time.time()} avg_hr {avg_hr}, rr_interval {rr_interval}")
+        json_data.update(self.json_data_format())
+        json_data["UTCTimestamp"] = rtc.datetime()
+        json_data["average"] = avg_hr
+        json_data["rrData"] = [rr_interval]
+#         hr_queue.enqueue(json_data)
         
     def _process_ecg_data(self, data):
         sample_count = len(data[6:]) // MovesenseDevice.BYTES_PER_ELEMENT
         # < = little endian, B = unsigned char
         # I = unsigned int, i = signed int, f = float
+        json_data = {}
+        json_data.update(self.json_data_format())
         data = list(unpack(f'<BBI{sample_count}i', data))
         ts = data[2]
         sensordata = data[3:]
-        samples = len(sensordata)
-        ecg_samples = []
-        for i in range(samples):
-            sample = [ts, sensordata[i]]
-            ecg_samples.append(sample)
-        self.log(f"ECG - ts: {ts}, samples {ecg_samples}")
+        json_data["UTCTimestamp"] = rtc.datetime()
+        json_data["Samples"] = sensordata
+        json_data["Timestamp"] = ts
+        # self.log(f"ecg: ts {ts}, samples data {sensordata}")
+        self.log(json_data)
+        # ecg_queue.enqueue(json_data)
+        
+        # samples = len(sensordata)
+        # ecg_samples = []
+        # for i in range(samples):
+        #     sample = [ts, sensordata[i]]
+        #     ecg_samples.append(sample)
+        # self.log(f"ECG - ts: {ts}, samples {ecg_samples}")
                 
     async def disconnect_ble(self):
         unsub_cmd = [
@@ -209,7 +234,7 @@ async def blink_task():
         toggle = not toggle
         await asyncio.sleep_ms(500)
 
-    
+
 async def main():
     """Run peripheral and blink tasks concurrently."""
     tasks = [
