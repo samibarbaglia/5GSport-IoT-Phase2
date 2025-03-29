@@ -47,9 +47,9 @@ class MovesenseDevice:
             print(f"Connecting device {device} to BLE...")
             self.connection = await device.connect(timeout_ms = 10000)
         except asyncio.TimeoutError:
-            print("Failed to connect to device due timeout")
+            print("Failed to connect to device due to timeout")
             return
-        print("Connected")
+        print(f"Connected to {device}")
         try:
             self.sensor_service = await self.connection.service(_GSP_SERVICE_UUID)
             self.notify_char = await self.sensor_service.characteristic(_GSP_NOTIFY_UUID)
@@ -82,10 +82,11 @@ class MovesenseDevice:
     async def process_notification(self):
         # Subscribe to notifications and process incoming data
         print("Waiting for notifications...")
-        duration = 10				# temporary stop the data reading for now
+        duration = 30				# temporary stop the data reading for now
         self.start_time = time.time()
         while self.connection.is_connected():
             try:
+                #TODO: temporary using time countdown to stop sensor and disconnect
                 elapsed_time = time.time() - self.start_time
                 if elapsed_time >= duration:
                     print(f"{duration} seconds elapsed, stopping...")
@@ -183,7 +184,7 @@ async def find_movesense(ms_series):
             if result.name() == f"Movesense {ms_series}":
                 print("Found Movesense sensor:", result.device)
                 return result.device
-    print("Movesense sensor not found")
+    print(f"Movesense series {ms_series} not found")
     return None
     
 
