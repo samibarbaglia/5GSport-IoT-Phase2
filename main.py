@@ -1,6 +1,6 @@
 import uasyncio as asyncio
 from movesense.movesense_controller import movesense_task, blink_task
-from gnss.gnss_sensor import GNSSSensor
+from gnss.gnss_device import GNSSDevice
 
 async def main():
     try:
