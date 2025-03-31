@@ -1,11 +1,16 @@
 import time
 import machine
-import json
+import uasyncio as asyncio
+# import json
+import sys
+sys.path.append('/')
+from data_queue import gnss_queue, running_state
 
 class GNSSDevice:
-    def __init__(self, i2c_id=0, scl_pin=5, sda_pin=4, freq=115200, address=0x20):
+    def __init__(self, device_id=1, i2c_id=0, scl_pin=5, sda_pin=4, freq=115200, address=0x20):
         self.i2c = machine.I2C(i2c_id, scl=machine.Pin(scl_pin), sda=machine.Pin(sda_pin), freq=freq)
         self.address = address
+        self.device_id = device_id
 
     def _calculate_checksum(self, sentence):
         """Calculate NMEA-style checksum."""
@@ -31,7 +36,7 @@ class GNSSDevice:
             date = f"{(data[0] << 8 | data[1])}-{data[2]:02}-{data[3]:02} {data[4]+2:02}:{data[5]:02}:{data[6]:02}"
             lat = f"{data[7]}.{(data[8] + (data[9] << 16 | data[10] << 8 | data[11])) / 60:.6f} {chr(data[18])}"
             lon = f"{data[13]}.{(data[14] + (data[15] << 16 | data[16] << 8 | data[17])) / 60:.6f} {chr(data[12])}"
-            return {"date": date, "lat": lat, "lon": lon}
+            return {"GNSS sensor ID": self.device_id, "Date": date, "Latitude": lat, "Longitude": lon}
         except Exception as e:
             print(f"Error parsing GNSS data: {e}")
             return None
@@ -40,4 +45,14 @@ class GNSSDevice:
         """Read GNSS data over I2C."""
         self.i2c.writeto(self.address, bytearray([0]))  # Request data
         raw_data = self.i2c.readfrom(self.address, 50)  # Read 50 bytes
-        return self._parse_data(raw_data)
+        self._parse_data(raw_data)
+        
+gnss_device = GNSSDevice()
+
+async def gnss_task():
+    while running_state:
+        gnss_device.send_command()
+        data = gnss_device.read_data()
+        if data:
+            gnss_queue.enqueue(data)
+        await asyncio.sleep_ms(500)

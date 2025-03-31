@@ -2,13 +2,16 @@ import aioble
 import uasyncio as asyncio
 import machine
 from movesense.movesense_device import MovesenseDevice
+import sys
+sys.path.append('/')
+from data_queue import running_state
 
 # Movesense series ID
-_MOVESENSE_SERIES = "174630000197"
+_MOVESENSE_SERIES = "174630000192"
 
 # Sensor Data Rate
-IMU_RATE = 52
-ECG_RATE = 125
+IMU_RATE = 52   #Sample rate can be 13, 26, 52, 104, 208, 416, 833, 1666
+ECG_RATE = 125  #Sample rate can be 125, 128, 200, 250, 256, 500, 512
 
 # Onboard LED
 led = machine.Pin("LED", machine.Pin.OUT)
@@ -24,14 +27,15 @@ async def find_movesense(ms_series):
     return None
 
 
-async def movesense_task():
-    device = await find_movesense(_MOVESENSE_SERIES)
+async def movesense_task(movesense_series=_MOVESENSE_SERIES):
+    # while running_state:
+    device = await find_movesense(movesense_series)
     if not device:
         return
 
-    ms = MovesenseDevice(_MOVESENSE_SERIES)
+    ms = MovesenseDevice(movesense_series)
     await ms.connect_ble(device)
-    await ms.subscribe_sensor("IMU", IMU_RATE)
+    await ms.subscribe_sensor("IMU9", IMU_RATE)
     await ms.subscribe_sensor("HR")
     await ms.subscribe_sensor("ECG", ECG_RATE)
 
