@@ -1,4 +1,7 @@
-running_state = False
+class MachineState:
+    running_state = False
+    def change_state(self):
+        MachineState.running_state = not MachineState.running_state
 
 class Queue:
     """Queue to handle data"""
@@ -28,3 +31,4 @@ ecg_queue = Queue(QUEUE_SIZE)
 imu_queue = Queue(QUEUE_SIZE)
 hr_queue = Queue(QUEUE_SIZE)
 gnss_queue = Queue(QUEUE_SIZE)
+state = MachineState()

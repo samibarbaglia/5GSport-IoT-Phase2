@@ -7,7 +7,7 @@ import machine
 import json
 import sys
 sys.path.append('/')
-from data_queue import ecg_queue, imu_queue, hr_queue
+from data_queue import ecg_queue, imu_queue, hr_queue, state
 
 # rtc = machine.RTC()
 
@@ -84,12 +84,12 @@ class MovesenseDevice:
         start_time = time.time()
         duration = 15  # Stop after 30 seconds
 
-        while self.connection.is_connected():
+        while state.running_state and self.connection.is_connected():
             # TEMPORARY (Don't delete it yet)
-            if time.time() - start_time >= duration:
-                self.log("Stopping after {duration} seconds...")
-                await self.disconnect_ble()
-                break
+            # if time.time() - start_time >= duration:
+            #     self.log("Stopping after {duration} seconds...")
+            #     await self.disconnect_ble()
+            #     break
 
             try:
                 data = await self.notify_char.notified(timeout_ms=300)

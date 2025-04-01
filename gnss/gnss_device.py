@@ -4,7 +4,7 @@ import uasyncio as asyncio
 # import json
 import sys
 sys.path.append('/')
-from data_queue import gnss_queue, running_state
+from data_queue import gnss_queue, state
 
 class GNSSDevice:
     def __init__(self, device_id=1, i2c_id=0, scl_pin=5, sda_pin=4, freq=115200, address=0x20):
@@ -50,7 +50,7 @@ class GNSSDevice:
 gnss_device = GNSSDevice()
 
 async def gnss_task():
-    while running_state:
+    while state.running_state:
         gnss_device.send_command()
         data = gnss_device.read_data()
         if data:
