@@ -3,9 +3,9 @@ import machine
 import time
 from wifi_connection import connect_wifi
 from data_queue import state
-from movesense.movesense_controller import movesense_task, blink_task
-from led.led import Led
-from gnss.gnss_device import GNSSDevice, gnss_task
+from movesense_controller import movesense_task, blink_task
+from led import Led
+from gnss_device import GNSSDevice, gnss_task
 
 SW_0_PIN = 9
 SW_1_PIN = 8

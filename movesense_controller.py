@@ -1,9 +1,9 @@
 import aioble
 import uasyncio as asyncio
 import machine
-from movesense.movesense_device import MovesenseDevice
-import sys
-sys.path.append('/')
+from movesense_device import MovesenseDevice
+# import sys
+# sys.path.append('/')
 from data_queue import state
 
 # Movesense series ID
