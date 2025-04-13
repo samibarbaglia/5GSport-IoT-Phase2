@@ -5,9 +5,9 @@ from micropython import const
 from struct import unpack
 import machine  
 import json
-import sys
-sys.path.append('/')
-from data_queue import ecg_queue, imu_queue, hr_queue
+# import sys
+# sys.path.append('/')
+from data_queue import ecg_queue, imu_queue, hr_queue, state
 
 # rtc = machine.RTC()
 
@@ -81,16 +81,8 @@ class MovesenseDevice:
 
     async def process_notification(self):
         self.log("Waiting for notifications...")
-        start_time = time.time()
-        duration = 15  # Stop after 30 seconds
 
-        while self.connection.is_connected():
-            # TEMPORARY (Don't delete it yet)
-            if time.time() - start_time >= duration:
-                self.log("Stopping after {duration} seconds...")
-                await self.disconnect_ble()
-                break
-
+        while state.running_state and self.connection.is_connected():
             try:
                 data = await self.notify_char.notified(timeout_ms=300)
                 if data:
