@@ -9,7 +9,6 @@ import json
 # sys.path.append('/')
 from data_queue import ecg_queue, imu_queue, hr_queue, state
 
-# rtc = machine.RTC()
 
 # GSP Service and Characteristic UUIDs
 _GSP_SERVICE_UUID = bluetooth.UUID("34802252-7185-4d5d-b431-630e7050e8f0")
@@ -25,8 +24,9 @@ _CMD_UNSUBSCRIBE = const(2)
 class MovesenseDevice:
     BYTES_PER_ELEMENT = 4
 
-    def __init__(self, movesense_series, imu_ref=99, hr_ref=98, ecg_ref=97):
+    def __init__(self, movesense_series, pico_id, imu_ref=99, hr_ref=98, ecg_ref=97):
         self.ms_series = str(movesense_series)
+        self.picoW_id = str(pico_id)
         self.imu_ref = imu_ref
         self.hr_ref = hr_ref
         self.ecg_ref = ecg_ref
@@ -112,6 +112,7 @@ class MovesenseDevice:
         # self.log(f"IMU Timestamp: {timestamp}, Data: {sensordata}")
         json_data = {
             "Movesense series": self.ms_series,
+            "Pico ID": self.picoW_id,
             "Timestamp_UTC": time.time(),
             "Timestamp_ms": timestamp,
             "ArrayAcc": [],
@@ -140,6 +141,7 @@ class MovesenseDevice:
         # self.log(f"HR: Avg {avg_hr}, RR Interval {rr_interval}")
         json_data = {
             "Movesense series": self.ms_series,
+            "Pico ID": self.picoW_id,
             "Timestamp_UTC": time.time(),
             "average": avg_hr,
             "rrData": [rr_interval]
@@ -154,6 +156,7 @@ class MovesenseDevice:
         sensordata = unpacked_data[3:]
         json_data = {
             "Movesense series": self.ms_series,
+            "Pico ID": self.picoW_id,
             "Timestamp_UTC": time.time(),
             "Timestamp_ms": ts,
             "Samples": sensordata

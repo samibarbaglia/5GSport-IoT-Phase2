@@ -34,11 +34,18 @@ async def running_state_on_led():
         led1.led_on() if state.running_state else led1.led_off()
         await asyncio.sleep_ms(500)
 
+def read_picoW_unique_id():
+    id_bytes = machine.unique_id()
+    picoW_id = id_bytes.hex()
+    return picoW_id
+
 async def main():
     try:
+        picoW_id = read_picoW_unique_id()
+        print(f"PicoW ID is {picoW_id}")
         # await connect_wifi()
         await asyncio.gather(
-            movesense_task(),
+            movesense_task(picoW_id),
             # gnss_task,
             blink_task(),
             running_state_on_led()

@@ -28,12 +28,12 @@ async def find_movesense(ms_series):
     return None
 
 
-async def movesense_task(movesense_series=_MOVESENSE_SERIES):
+async def movesense_task(pico_id, movesense_series=_MOVESENSE_SERIES):
     device = await find_movesense(movesense_series)
     if not device:
         return
     connected = False
-    ms = MovesenseDevice(movesense_series)
+    ms = MovesenseDevice(movesense_series, pico_id)
     while True:
         if state.running_state and not connected:
             await ms.connect_ble(device)
