@@ -1,20 +1,17 @@
 import uasyncio as asyncio
 import machine
 import time
+
+from config import (SW_0_PIN, SW_1_PIN, SW_2_PIN, LED1, LED2, LED3)
+
 from wifi_connection import connect_wifi
 from data_queue import state
 from movesense_controller import movesense_task, blink_task
 from led import Led
 from gnss_device import GNSSDevice, gnss_task
+from mqtt import connect_mqtt, publish_to_mqtt
 
-SW_0_PIN = 9
-SW_1_PIN = 8
-SW_2_PIN = 7
-LED1 = 22
-LED2 = 21
-LED3 = 20
 
-# led1 = machine.Pin(LED1, machine.Pin.OUT)
 led1 = Led(LED1)
 button = machine.Pin(SW_1_PIN, machine.Pin.IN, machine.Pin.PULL_UP)
 button_pressed = False
@@ -43,10 +40,12 @@ async def main():
     try:
         picoW_id = read_picoW_unique_id()
         print(f"PicoW ID is {picoW_id}")
-        # await connect_wifi()
+        await connect_wifi()
+        mqtt_client = await connect_mqtt()
         await asyncio.gather(
             movesense_task(picoW_id),
             # gnss_task,
+            publish_to_mqtt(mqtt_client),
             blink_task(),
             running_state_on_led()
         )

@@ -1,11 +1,12 @@
 import network
 import time
+import uasyncio as asyncio
 
-SSID = ""
-PASSWORD = ""
+from password import WIFI_SSID, WIFI_PASSWORD
+
 WAITING_FOR_WIFI_CONNECTION_SECONDS = 10
 
-async def connect_wifi(ssid=SSID, password=PASSWORD):
+async def connect_wifi(ssid=WIFI_SSID, password=WIFI_PASSWORD):
     wlan = network.WLAN(network.STA_IF)
     wlan.active(True)
     wlan.connect(ssid, password)
@@ -15,6 +16,6 @@ async def connect_wifi(ssid=SSID, password=PASSWORD):
             print(f"Can't connect to ssid {ssid}")
             break
         print(f"Connecting wifi...")
-        time.sleep(1)
+        await asyncio.sleep(1)
     if wlan.isconnected():
-        print("Connected!", wlan.ifconfig())
+        print("Connected to Wifi: ", wlan.ifconfig())

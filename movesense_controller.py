@@ -31,6 +31,7 @@ async def find_movesense(ms_series):
 async def movesense_task(pico_id, movesense_series=_MOVESENSE_SERIES):
     device = await find_movesense(movesense_series)
     if not device:
+        print(f"Can't find Movesense device {device} to connect to PicoW. No Movesense data will be recorded")
         return
     connected = False
     ms = MovesenseDevice(movesense_series, pico_id)

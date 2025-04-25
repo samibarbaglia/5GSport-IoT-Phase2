@@ -27,8 +27,9 @@ class Queue:
         return len(self.queue_list) == 0
 
 QUEUE_SIZE = 50
-ecg_queue = Queue(QUEUE_SIZE)
-imu_queue = Queue(QUEUE_SIZE)
+
+ecg_queue = Queue(QUEUE_SIZE*2)
+imu_queue = Queue(QUEUE_SIZE*2)
 hr_queue = Queue(QUEUE_SIZE)
 gnss_queue = Queue(QUEUE_SIZE)
 state = MachineState()
