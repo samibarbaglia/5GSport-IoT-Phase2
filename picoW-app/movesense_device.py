@@ -5,8 +5,6 @@ from micropython import const
 from struct import unpack
 import machine  
 import json
-# import sys
-# sys.path.append('/')
 from data_queue import ecg_queue, imu_queue, hr_queue, state
 
 
@@ -111,8 +109,8 @@ class MovesenseDevice:
         samples_per_sensor = len(sensordata) // sensor_count
         # self.log(f"IMU Timestamp: {timestamp}, Data: {sensordata}")
         json_data = {
-            "Movesense series": self.ms_series,
-            "Pico ID": self.picoW_id,
+            "Movesense_series": self.ms_series,
+            "Pico_ID": self.picoW_id,
             "Timestamp_UTC": time.time(),
             "Timestamp_ms": timestamp,
             "ArrayAcc": [],
@@ -140,8 +138,8 @@ class MovesenseDevice:
         rr_interval = unpacked_data[3]
         # self.log(f"HR: Avg {avg_hr}, RR Interval {rr_interval}")
         json_data = {
-            "Movesense series": self.ms_series,
-            "Pico ID": self.picoW_id,
+            "Movesense_series": self.ms_series,
+            "Pico_ID": self.picoW_id,
             "Timestamp_UTC": time.time(),
             "average": avg_hr,
             "rrData": [rr_interval]
@@ -155,8 +153,8 @@ class MovesenseDevice:
         ts = unpacked_data[2]
         sensordata = unpacked_data[3:]
         json_data = {
-            "Movesense series": self.ms_series,
-            "Pico ID": self.picoW_id,
+            "Movesense_series": self.ms_series,
+            "Pico_ID": self.picoW_id,
             "Timestamp_UTC": time.time(),
             "Timestamp_ms": ts,
             "Samples": sensordata

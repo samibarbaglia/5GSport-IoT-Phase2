@@ -15,6 +15,7 @@ Micropython firmware v1.22
 ### Packages required in Raspberry Pi PicoW
 
 micropython-umqtt.simple
+
 micropython-umqtt.robust
 
 ### Features and usability

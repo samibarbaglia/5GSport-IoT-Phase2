@@ -8,9 +8,8 @@ from wifi_connection import connect_wifi
 from data_queue import state
 from movesense_controller import movesense_task, blink_task
 from led import Led
-from gnss_device import GNSSDevice, gnss_task
 from mqtt import connect_mqtt, publish_to_mqtt
-
+from GNSS_sensor import set_up_gnss_sensor, gnss_task
 
 led1 = Led(LED1)
 button = machine.Pin(SW_1_PIN, machine.Pin.IN, machine.Pin.PULL_UP)
@@ -39,12 +38,13 @@ def read_picoW_unique_id():
 async def main():
     try:
         picoW_id = read_picoW_unique_id()
+        await set_up_gnss_sensor()
         print(f"PicoW ID is {picoW_id}")
         await connect_wifi()
         mqtt_client = await connect_mqtt()
         await asyncio.gather(
             movesense_task(picoW_id),
-            # gnss_task,
+            gnss_task(picoW_id),
             publish_to_mqtt(mqtt_client),
             blink_task(),
             running_state_on_led()
