@@ -1,6 +1,6 @@
 import uasyncio as asyncio
 from umqtt.robust import MQTTClient
-from data_queue import ecg_queue, hr_queue, imu_queue, gnss_queue
+from data_queue import ecg_queue, hr_queue, imu_queue, gnss_queue, state
 from password import MQTT_CONFIG
 
 own_mqtt_broker_enabled = True
@@ -33,8 +33,10 @@ async def connect_mqtt():
         mqtt_client.connect()
     except Exception as e:
         print(f"Error connecting to MQTT: {e}")
+        state.network_connection_state = False
         return None
     else:
+        state.network_connection_state = True
         print("MQTT broker connected")
     return mqtt_client
 

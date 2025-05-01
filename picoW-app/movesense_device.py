@@ -86,13 +86,10 @@ class MovesenseDevice:
                 if data:
                     ref_code = data[1]
                     if ref_code == self.imu_ref:
-                        # self.log("IMU data received")
                         self._process_imu_data(data)
                     elif ref_code == self.ecg_ref:
-                        # self.log("ECG data received")
                         self._process_ecg_data(data)
                     elif ref_code == self.hr_ref:
-                        # self.log("HR data received")
                         self._process_hr_data(data)
                     else:
                         self.log("Unknown data received")
