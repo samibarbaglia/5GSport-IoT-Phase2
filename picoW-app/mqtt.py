@@ -36,8 +36,12 @@ async def connect_mqtt():
         state.network_connection_state = False
         return None
     else:
-        state.network_connection_state = True
-        print("MQTT broker connected")
+        if mqtt_client is not None:
+            state.network_connection_state = True
+            print("MQTT broker connected")
+        else:
+            state.network_connection_state = False
+            print(f"MQTT broker is {mqtt_client}")
     return mqtt_client
 
 async def publish_to_mqtt(mqtt_client):
