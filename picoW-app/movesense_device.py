@@ -104,7 +104,6 @@ class MovesenseDevice:
         sensordata = [round(v, 3) for v in unpacked_data[3:]]
         sensordata = list(zip(sensordata[::3], sensordata[1::3], sensordata[2::3]))
         samples_per_sensor = len(sensordata) // sensor_count
-        # self.log(f"IMU Timestamp: {timestamp}, Data: {sensordata}")
         json_data = {
             "Movesense_series": self.ms_series,
             "Pico_ID": self.picoW_id,
@@ -133,7 +132,6 @@ class MovesenseDevice:
         unpacked_data = list(unpack('<BBfH', data))
         avg_hr = unpacked_data[2]
         rr_interval = unpacked_data[3]
-        # self.log(f"HR: Avg {avg_hr}, RR Interval {rr_interval}")
         json_data = {
             "Movesense_series": self.ms_series,
             "Pico_ID": self.picoW_id,
