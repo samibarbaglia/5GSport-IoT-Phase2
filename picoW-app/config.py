@@ -1,14 +1,14 @@
-#Switch Pin
+# Switch Pin
 SW_0_PIN = 9
 SW_1_PIN = 8
 SW_2_PIN = 7
 
-#Led Pin
+# Led Pin
 LED1 = 22
 LED2 = 21
 LED3 = 20
 
-#I2C Pin
-SDA_PIN = 4
-SCL_PIN = 5
-I2C_BAUD_RATE = 115200
+# UART Pin
+TX_PIN = 4
+RX_PIN = 5
+UART_BAUD_RATE = 115200
