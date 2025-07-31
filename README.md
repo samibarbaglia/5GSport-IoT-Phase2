@@ -1,6 +1,7 @@
-# 🌐 Innovation IoT Project
+# 🌐 Metropolia x Nokia 5G Sport Project (Phase 2, IoT)
 
-This project integrates a **Movesense device** with a **Raspberry Pi Pico WH**, forming an IoT system that collects movement and GNSS data and forwards it to an MQTT broker over Wi-Fi.
+This project integrates a **Movesense device** and a **Bynav M10 module** with a **Raspberry Pi Pico WH**, forming an IoT system that collects movement and GNSS data and forwards it to an MQTT broker over Wi-Fi. 
+Phase 2 added new GNSS functionality (DFRobot TEL0157 replaced by Bynav M10).
 
 ---
 
@@ -25,10 +26,11 @@ Firmware application for the Raspberry Pi Pico WH.
 
 ### 🔧 Description
 
-The Pico WH functions as both a microcontroller and an IoT gateway, performing the following tasks:
+The Pico WH functions as both a microcontroller, an IoT gateway, and RTK bridge, performing the following tasks:
 
 - Connects to the Movesense device using the GATT SensorData service to retrieve sensor data.
-- Reads location data from a GNSS module (DFRobot TEL0157).
+- Reads location data from a GNSS module (Bynav M10).
+- Using NTRIP connects to caster to send GNSS data to VRS and forwards RTK correction data back to Bynav.
 - Forwards combined data to a pre-configured MQTT broker over Wi-Fi.
 
 Tested on MicroPython firmware v1.22.
