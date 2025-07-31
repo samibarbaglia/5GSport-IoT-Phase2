@@ -30,7 +30,7 @@ The Pico WH functions as both a microcontroller, an IoT gateway, and RTK bridge,
 
 - Connects to the Movesense device using the GATT SensorData service to retrieve sensor data.
 - Reads location data from a GNSS module (Bynav M10).
-- Using NTRIP connects to caster to send GNSS data to VRS and forwards RTK correction data back to Bynav.
+- Connects to caster to send location data to VRS + forwards RTK correction data from VRS back to Bynav.
 - Forwards combined data to a pre-configured MQTT broker over Wi-Fi.
 
 Tested on MicroPython firmware v1.22.
