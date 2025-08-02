@@ -1,10 +1,7 @@
 # 🌐 Metropolia x Nokia 5G Sport Project (Phase 2, IoT)
 
-This project integrates a **Movesense device** and a **Bynav M10 module** with a **Raspberry Pi Pico WH**, forming an IoT system that collects movement and GNSS data and forwards it to an MQTT broker over Wi-Fi. 
-Phase 2 added new GNSS functionality (DFRobot TEL0157 replaced by Bynav M10).
-
-Code of Phase 2 is based on Phase 1 (https://github.com/hannahhoang2704/IoTSport-IceHockey-Tracker). 
-The biggest changes to it were the deletion of GNSS_sensor.py + DFRobot_GNSS.py files and the addition of bynav_GNSS.py file.
+This project was the second phase of Metropolia UAS 5G Sport project for Nokia. It integrates a **Movesense device** and a **Bynav M10 module** with a **Raspberry Pi Pico WH**, forming an IoT system that collects movement and GNSS data and forwards it to an MQTT broker over Wi-Fi. 
+Phase 2 added new GNSS functionality for better location accuracy by replacing DFRobot TEL0157 with Bynav M10.
 
 ---
 
